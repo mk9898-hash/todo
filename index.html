@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f7fafc;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            background: white;
+            border: 2px solid #e2e8f0;
+        }
+
+        header {
+            margin-bottom: 2rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #2d3748;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            background: #e2e8f0;
+            color: #2d3748;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #cbd5e0;
+        }
+
+        .auth-container {
+            text-align: center;
+        }
+
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .auth-input {
+            padding: 0.75rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #edf2f7;
+            color: #2d3748;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: #2d3748;
+        }
+
+        .auth-btn {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            background: #2d3748;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .auth-btn:hover {
+            background: #1a202c;
+        }
+
+        .auth-toggle {
+            margin-top: 1rem;
+            color: #718096;
+        }
+
+        .auth-toggle button {
+            background: none;
+            border: none;
+            color: #2d3748;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 1rem;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        #todo-input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #edf2f7;
+            color: #2d3748;
+            transition: all 0.2s ease;
+        }
+
+        #todo-input:focus {
+            outline: none;
+            border-color: #2d3748;
+        }
+
+        #add-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            background: #2d3748;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        #add-btn:hover {
+            transform: translateY(-2px);
+            background: #1a202c;
+        }
+
+        .todo-list {
+            list-style: none;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 6px;
+            background: #edf2f7;
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .todo-item:hover {
+            transform: translateX(5px);
+        }
+
+        .todo-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .todo-text {
+            flex: 1;
+            font-size: 1rem;
+            color: #2d3748;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .calendar-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            background: #38a169;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .calendar-btn:hover {
+            transform: scale(1.05);
+            background: #2f855a;
+        }
+
+        .delete-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            background: #718096;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            transform: scale(1.05);
+            background: #4a5568;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #718096;
+        }
+
+        .error-message {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <p>Loading...</p>
+        </div>
+
+        <!-- Auth Screen -->
+        <div id="auth-screen" class="hidden">
+            <div class="auth-container">
+                <h1>My To-Do List</h1>
+                <p style="color: #718096; margin-top: 0.5rem;">Sign in to sync your todos across devices</p>
+
+                <div id="error-container"></div>
+
+                <form id="auth-form" class="auth-form">
+                    <input type="email" id="auth-email" class="auth-input" placeholder="Email" required>
+                    <input type="password" id="auth-password" class="auth-input" placeholder="Password" required>
+                    <button type="submit" class="auth-btn" id="auth-submit-btn">Sign In</button>
+                </form>
+
+                <div class="auth-toggle">
+                    <span id="auth-toggle-text">Don't have an account?</span>
+                    <button type="button" id="auth-toggle-btn">Sign Up</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Screen -->
+        <div id="app-screen" class="hidden">
+            <header>
+                <div class="header-content">
+                    <h1>My To-Do List</h1>
+                    <div class="user-info">
+                        <span id="user-email"></span>
+                        <button class="logout-btn" id="logout-btn">Logout</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="input-section">
+                <input type="text" id="todo-input" placeholder="Add a new task...">
+                <button id="add-btn">Add</button>
+            </div>
+
+            <ul class="todo-list" id="todo-list">
+                <!-- Todo items will be added here -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // Initialize Supabase
+        const SUPABASE_URL = 'https://barwkifmvaztiakzmifs.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhcndraWZtdmF6dGlha3ptaWZzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2ODYxNTYsImV4cCI6MjA3NzI2MjE1Nn0.G0MpqJ5PgMm3uKZ4IE6wzlXAMr0b8QdDwqUF2aolJY0';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+        let isSignUp = false;
+
+        // Elements
+        const loading = document.getElementById('loading');
+        const authScreen = document.getElementById('auth-screen');
+        const appScreen = document.getElementById('app-screen');
+        const authForm = document.getElementById('auth-form');
+        const authEmail = document.getElementById('auth-email');
+        const authPassword = document.getElementById('auth-password');
+        const authSubmitBtn = document.getElementById('auth-submit-btn');
+        const authToggleBtn = document.getElementById('auth-toggle-btn');
+        const authToggleText = document.getElementById('auth-toggle-text');
+        const errorContainer = document.getElementById('error-container');
+        const userEmailSpan = document.getElementById('user-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const todoInput = document.getElementById('todo-input');
+        const addBtn = document.getElementById('add-btn');
+        const todoList = document.getElementById('todo-list');
+
+        // Show error message
+        function showError(message) {
+            errorContainer.innerHTML = `<div class="error-message">${message}</div>`;
+            setTimeout(() => {
+                errorContainer.innerHTML = '';
+            }, 5000);
+        }
+
+        // Toggle between sign in and sign up
+        authToggleBtn.addEventListener('click', () => {
+            isSignUp = !isSignUp;
+            if (isSignUp) {
+                authSubmitBtn.textContent = 'Sign Up';
+                authToggleText.textContent = 'Already have an account?';
+                authToggleBtn.textContent = 'Sign In';
+            } else {
+                authSubmitBtn.textContent = 'Sign In';
+                authToggleText.textContent = "Don't have an account?";
+                authToggleBtn.textContent = 'Sign Up';
+            }
+        });
+
+        // Handle auth form submission
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = authEmail.value.trim();
+            const password = authPassword.value;
+
+            if (isSignUp) {
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                });
+
+                if (error) {
+                    showError(error.message);
+                } else {
+                    showError('Check your email to confirm your account!');
+                    // Switch to sign in mode
+                    isSignUp = false;
+                    authSubmitBtn.textContent = 'Sign In';
+                    authToggleText.textContent = "Don't have an account?";
+                    authToggleBtn.textContent = 'Sign Up';
+                }
+            } else {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password,
+                });
+
+                if (error) {
+                    showError(error.message);
+                }
+            }
+        });
+
+        // Handle logout
+        logoutBtn.addEventListener('click', async () => {
+            await supabase.auth.signOut();
+        });
+
+        // Check auth state and show appropriate screen
+        supabase.auth.onAuthStateChange((event, session) => {
+            loading.classList.add('hidden');
+
+            if (session) {
+                currentUser = session.user;
+                authScreen.classList.add('hidden');
+                appScreen.classList.remove('hidden');
+                userEmailSpan.textContent = currentUser.email;
+                loadTodos();
+            } else {
+                currentUser = null;
+                appScreen.classList.add('hidden');
+                authScreen.classList.remove('hidden');
+            }
+        });
+
+        // Load todos from Supabase
+        async function loadTodos() {
+            const { data, error } = await supabase
+                .from('todos')
+                .select('*')
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error('Error loading todos:', error);
+                return;
+            }
+
+            renderTodos(data || []);
+        }
+
+        // Add todo to Supabase
+        async function addTodo() {
+            const text = todoInput.value.trim();
+            if (text === '') return;
+
+            const { data, error } = await supabase
+                .from('todos')
+                .insert([
+                    {
+                        user_id: currentUser.id,
+                        text: text,
+                        completed: false
+                    }
+                ])
+                .select();
+
+            if (error) {
+                console.error('Error adding todo:', error);
+                showError('Failed to add todo');
+                return;
+            }
+
+            todoInput.value = '';
+            loadTodos();
+        }
+
+        // Delete todo from Supabase
+        async function deleteTodo(id) {
+            const { error } = await supabase
+                .from('todos')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                console.error('Error deleting todo:', error);
+                return;
+            }
+
+            loadTodos();
+        }
+
+        // Toggle complete in Supabase
+        async function toggleComplete(id, currentStatus) {
+            const { error } = await supabase
+                .from('todos')
+                .update({ completed: !currentStatus })
+                .eq('id', id);
+
+            if (error) {
+                console.error('Error updating todo:', error);
+                return;
+            }
+
+            loadTodos();
+        }
+
+        // Generate .ics file for Apple Calendar
+        function addToCalendar(todo) {
+            // Create default date/time (today at 9 AM)
+            const now = new Date();
+            const startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0, 0);
+            const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour later
+
+            // Format dates for iCalendar (YYYYMMDDTHHMMSS)
+            function formatICalDate(date) {
+                const pad = (n) => n.toString().padStart(2, '0');
+                return date.getFullYear() +
+                       pad(date.getMonth() + 1) +
+                       pad(date.getDate()) +
+                       'T' +
+                       pad(date.getHours()) +
+                       pad(date.getMinutes()) +
+                       pad(date.getSeconds());
+            }
+
+            const startDateFormatted = formatICalDate(startDate);
+            const endDateFormatted = formatICalDate(endDate);
+            const nowFormatted = formatICalDate(new Date());
+
+            // Create .ics content
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//Todo App//EN',
+                'CALSCALE:GREGORIAN',
+                'BEGIN:VEVENT',
+                `DTSTART:${startDateFormatted}`,
+                `DTEND:${endDateFormatted}`,
+                `DTSTAMP:${nowFormatted}`,
+                `UID:${todo.id}@todoapp`,
+                `SUMMARY:${todo.text}`,
+                'STATUS:CONFIRMED',
+                'SEQUENCE:0',
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            // Create blob and download
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `${todo.text.replace(/[^a-z0-9]/gi, '_')}.ics`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Render todos
+        function renderTodos(todos) {
+            todoList.innerHTML = '';
+
+            if (todos.length === 0) {
+                todoList.innerHTML = '<div class="empty-state">No tasks yet. Add one above!</div>';
+                return;
+            }
+
+            todos.forEach(todo => {
+                const li = document.createElement('li');
+                li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+
+                li.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}>
+                    <span class="todo-text">${todo.text}</span>
+                    <div class="todo-actions">
+                        <button class="calendar-btn">Add to Calendar</button>
+                        <button class="delete-btn">Delete</button>
+                    </div>
+                `;
+
+                // Add event listeners
+                const checkbox = li.querySelector('.todo-checkbox');
+                checkbox.addEventListener('change', () => toggleComplete(todo.id, todo.completed));
+
+                const calendarBtn = li.querySelector('.calendar-btn');
+                calendarBtn.addEventListener('click', () => addToCalendar(todo));
+
+                const deleteBtn = li.querySelector('.delete-btn');
+                deleteBtn.addEventListener('click', () => deleteTodo(todo.id));
+
+                todoList.appendChild(li);
+            });
+        }
+
+        // Event listeners
+        addBtn.addEventListener('click', addTodo);
+        todoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+
+        // Subscribe to real-time changes
+        supabase
+            .channel('todos')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'todos' }, payload => {
+                loadTodos();
+            })
+            .subscribe();
+    </script>
+</body>
+</html>
