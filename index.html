@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -11,23 +14,66 @@
             box-sizing: border-box;
         }
 
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #f7fafc;
+            padding: 2rem 0;
+            background: linear-gradient(135deg,
+                #7DD3FC 0%,
+                #C084FC 25%,
+                #EC4899 50%,
+                #F472B6 60%,
+                #FB923C 75%,
+                #F97316 85%,
+                #EF4444 100%);
+            background-size: 400% 400%;
+            background-attachment: fixed;
+            animation: gradientFlow 30s ease infinite;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(125, 211, 252, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(239, 68, 68, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.2) 0%, transparent 50%);
+            animation: gradientFlow 40s ease infinite;
+            pointer-events: none;
         }
 
         .container {
             width: 90%;
             max-width: 600px;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            background: white;
-            border: 2px solid #e2e8f0;
+            padding: 2.5rem;
+            border-radius: 24px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37),
+                        0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            position: relative;
+            z-index: 1;
         }
 
         header {
@@ -43,7 +89,34 @@
 
         h1 {
             font-size: 2rem;
-            color: #2d3748;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .editable-title {
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .editable-title:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .title-input {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            padding: 0.25rem 0.5rem;
+            outline: none;
+            font-family: inherit;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .user-info {
@@ -51,22 +124,25 @@
             align-items: center;
             gap: 1rem;
             font-size: 0.9rem;
-            color: #718096;
+            color: rgba(255, 255, 255, 0.85);
         }
 
         .logout-btn {
             padding: 0.5rem 1rem;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 0.9rem;
-            background: #e2e8f0;
-            color: #2d3748;
-            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
         }
 
         .logout-btn:hover {
-            background: #cbd5e0;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
         }
 
         .auth-container {
@@ -82,46 +158,61 @@
 
         .auth-input {
             padding: 0.75rem;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
             font-size: 1rem;
-            background: #edf2f7;
-            color: #2d3748;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.95);
+            transition: all 0.3s ease;
+        }
+
+        .auth-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .auth-input:focus {
             outline: none;
-            border-color: #2d3748;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         .auth-btn {
             padding: 0.75rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 12px;
             font-weight: bold;
             cursor: pointer;
             font-size: 1rem;
-            background: #2d3748;
-            color: white;
-            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
         }
 
         .auth-btn:hover {
-            background: #1a202c;
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
         }
 
         .auth-toggle {
             margin-top: 1rem;
-            color: #718096;
+            color: rgba(255, 255, 255, 0.8);
         }
 
         .auth-toggle button {
             background: none;
             border: none;
-            color: #2d3748;
+            color: rgba(255, 255, 255, 0.95);
             cursor: pointer;
             text-decoration: underline;
             font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .auth-toggle button:hover {
+            color: rgba(255, 255, 255, 1);
         }
 
         .input-section {
@@ -133,34 +224,42 @@
         #todo-input {
             flex: 1;
             padding: 0.75rem;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
             font-size: 1rem;
-            background: #edf2f7;
-            color: #2d3748;
-            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.95);
+            transition: all 0.3s ease;
+        }
+
+        #todo-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
 
         #todo-input:focus {
             outline: none;
-            border-color: #2d3748;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.25);
         }
 
         #add-btn {
             padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 12px;
             font-weight: bold;
             cursor: pointer;
             font-size: 1rem;
-            background: #2d3748;
-            color: white;
-            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
         }
 
         #add-btn:hover {
             transform: translateY(-2px);
-            background: #1a202c;
+            background: rgba(255, 255, 255, 0.4);
         }
 
         .todo-list {
@@ -172,15 +271,18 @@
             align-items: center;
             gap: 1rem;
             padding: 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 6px;
-            background: #edf2f7;
-            border: 1px solid #e2e8f0;
-            transition: all 0.2s ease;
+            margin-bottom: 0.75rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
         }
 
         .todo-item:hover {
             transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .todo-checkbox {
@@ -188,17 +290,18 @@
             height: 20px;
             cursor: pointer;
             flex-shrink: 0;
+            accent-color: rgba(255, 255, 255, 0.8);
         }
 
         .todo-text {
             flex: 1;
             font-size: 1rem;
-            color: #2d3748;
+            color: rgba(255, 255, 255, 0.95);
         }
 
         .todo-item.completed .todo-text {
             text-decoration: line-through;
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
         .todo-actions {
@@ -208,50 +311,71 @@
         }
 
         .calendar-btn {
-            padding: 0.5rem 1rem;
+            padding: 0.5rem;
             border: none;
-            border-radius: 4px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: bold;
-            background: #38a169;
-            color: white;
-            transition: all 0.2s ease;
+            font-size: 1.2rem;
+            font-weight: 400;
+            background: rgba(52, 211, 153, 0.4);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(52, 211, 153, 0.5);
+            transition: all 0.3s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .calendar-btn:hover {
-            transform: scale(1.05);
-            background: #2f855a;
+            transform: scale(1.1);
+            background: rgba(52, 211, 153, 0.5);
+            border-color: rgba(52, 211, 153, 0.7);
         }
 
         .delete-btn {
-            padding: 0.5rem 1rem;
+            padding: 0.5rem;
             border: none;
-            border-radius: 4px;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: bold;
-            background: #718096;
-            color: white;
-            transition: all 0.2s ease;
+            font-size: 1.3rem;
+            font-weight: 400;
+            background: rgba(248, 113, 113, 0.4);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(248, 113, 113, 0.5);
+            transition: all 0.3s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
 
         .delete-btn:hover {
-            transform: scale(1.05);
-            background: #4a5568;
+            transform: scale(1.1);
+            background: rgba(248, 113, 113, 0.5);
+            border-color: rgba(248, 113, 113, 0.7);
         }
 
         .empty-state {
             text-align: center;
             padding: 3rem 1rem;
-            color: #718096;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
         }
 
         .error-message {
-            background: #fed7d7;
-            color: #c53030;
+            background: rgba(254, 202, 202, 0.3);
+            backdrop-filter: blur(10px);
+            color: rgba(255, 255, 255, 0.95);
             padding: 0.75rem;
-            border-radius: 6px;
+            border-radius: 12px;
             margin-bottom: 1rem;
+            border: 1px solid rgba(248, 113, 113, 0.5);
         }
 
         .hidden {
@@ -261,7 +385,8 @@
         .loading {
             text-align: center;
             padding: 2rem;
-            color: #718096;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -275,8 +400,8 @@
         <!-- Auth Screen -->
         <div id="auth-screen" class="hidden">
             <div class="auth-container">
-                <h1>My To-Do List</h1>
-                <p style="color: #718096; margin-top: 0.5rem;">Sign in to sync your todos across devices</p>
+                <h1 id="auth-title">My To-Do List</h1>
+                <p style="color: rgba(255, 255, 255, 0.8); margin-top: 0.5rem;">Sign in to sync your todos across devices</p>
 
                 <div id="error-container"></div>
 
@@ -297,7 +422,7 @@
         <div id="app-screen" class="hidden">
             <header>
                 <div class="header-content">
-                    <h1>My To-Do List</h1>
+                    <h1 id="app-title" class="editable-title">My To-Do List</h1>
                     <div class="user-info">
                         <span id="user-email"></span>
                         <button class="logout-btn" id="logout-btn">Logout</button>
@@ -328,6 +453,7 @@
 
         let currentUser = null;
         let isSignUp = false;
+        let currentListName = 'My To-Do List';
 
         // Elements
         const loading = document.getElementById('loading');
@@ -345,6 +471,7 @@
         const todoInput = document.getElementById('todo-input');
         const addBtn = document.getElementById('add-btn');
         const todoList = document.getElementById('todo-list');
+        const appTitle = document.getElementById('app-title');
 
         // Show error message
         function showError(message) {
@@ -353,6 +480,87 @@
                 errorContainer.innerHTML = '';
             }, 5000);
         }
+
+        // Load list name from Supabase
+        async function loadListName() {
+            const { data, error } = await supabase
+                .from('user_settings')
+                .select('list_name')
+                .eq('user_id', currentUser.id)
+                .single();
+
+            if (error && error.code !== 'PGRST116') {
+                console.error('Error loading list name:', error);
+                return;
+            }
+
+            if (data) {
+                currentListName = data.list_name;
+            } else {
+                // Create default settings for new user
+                await supabase
+                    .from('user_settings')
+                    .insert([{ user_id: currentUser.id, list_name: 'My To-Do List' }]);
+            }
+
+            appTitle.textContent = currentListName;
+        }
+
+        // Save list name to Supabase
+        async function saveListName(newName) {
+            const { error } = await supabase
+                .from('user_settings')
+                .upsert({
+                    user_id: currentUser.id,
+                    list_name: newName
+                }, {
+                    onConflict: 'user_id'
+                });
+
+            if (error) {
+                console.error('Error saving list name:', error);
+                showError('Failed to save list name');
+            } else {
+                console.log('List name saved successfully:', newName);
+            }
+        }
+
+        // Make title editable
+        function makeEditable() {
+            const currentText = appTitle.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            input.className = 'title-input';
+
+            appTitle.replaceWith(input);
+            input.focus();
+            input.select();
+
+            function saveTitle() {
+                const newTitle = input.value.trim() || 'My To-Do List';
+                currentListName = newTitle;
+
+                const h1 = document.createElement('h1');
+                h1.id = 'app-title';
+                h1.className = 'editable-title';
+                h1.textContent = newTitle;
+                h1.addEventListener('click', makeEditable);
+
+                input.replaceWith(h1);
+                saveListName(newTitle);
+            }
+
+            input.addEventListener('blur', saveTitle);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveTitle();
+                }
+            });
+        }
+
+        // Add click listener to title
+        appTitle.addEventListener('click', makeEditable);
 
         // Toggle between sign in and sign up
         authToggleBtn.addEventListener('click', () => {
@@ -416,6 +624,7 @@
                 authScreen.classList.add('hidden');
                 appScreen.classList.remove('hidden');
                 userEmailSpan.textContent = currentUser.email;
+                loadListName();
                 loadTodos();
             } else {
                 currentUser = null;
@@ -563,8 +772,8 @@
                     <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}>
                     <span class="todo-text">${todo.text}</span>
                     <div class="todo-actions">
-                        <button class="calendar-btn">Add to Calendar</button>
-                        <button class="delete-btn">Delete</button>
+                        <button class="calendar-btn" title="Add to Calendar">📅</button>
+                        <button class="delete-btn" title="Delete">✕</button>
                     </div>
                 `;
 
